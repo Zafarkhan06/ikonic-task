@@ -48,13 +48,16 @@ class User extends Authenticatable implements FilamentUser
         'password' => 'hashed',
     ];
 
-    /**
+  
+
+     /**
      * @return BelongsToMany
      */
-    public function categories()
+    public function feedbacks()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Feedback::class);
     }
+
 
     /**
      * @return HasMany
@@ -71,26 +74,14 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Bookmark::class);
     }
-    public function services(): HasMany
-    {
-        return $this->hasMany(Service::class);
-    }
+    
 
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->hasRole('Admin');
     }
-    public function onboardingAnswer()
-    {
-        return $this->hasOne(OnboardingAnswer::class);
-    }
-    public function vendor()
-    {
-        return $this->hasOne(Vendor::class);
-    }
 
-    public function itemPrice()
-    {
-        return $this->hasMany(ItemPrice::class);
-    }
+    
+
+    
 }

@@ -54,15 +54,6 @@ class AuthController extends Controller
                 'confirm_password' => 'required|same:password',
                 'role'             => 'required|string|in:User,VendorAdmin',
             ]);
-            if ($request->input('role') == 'VendorAdmin') {
-                $this->validate($request, [
-                    'answers.answer_1' => 'required',
-                    'answers.answer_2' => 'required',
-                    'answers.answer_3' => 'required',
-                    'answers.answer_4' => 'required|digits:4|integer',
-                    'answers.answer_5' => 'required',
-                ]);
-            }
         } catch (ValidationException $e) {
             return response()->json([
                 'error' => $e->validator->errors()->first(),
@@ -80,16 +71,6 @@ class AuthController extends Controller
                 $user->assignRole('User');
             } elseif ($role == 'VendorAdmin') {
                 $user->assignRole('VendorAdmin');
-                $answers = $request->input('answers');
-                $onboardingAnswersToDb = [
-                    'answer_1' => $answers['answer_1'],
-                    'answer_2' => json_encode($answers['answer_2']),
-                    'answer_3' => $answers['answer_3'],
-                    'answer_4' => $answers['answer_4'],
-                    'answer_5' => $answers['answer_5'],
-                    'user_id'  => $user->id,
-                ];
-                $this->onboardingAnswersServices->create($onboardingAnswersToDb);
             }
             $token = Str::random(64);
             DB::table('personal_access_tokens')->insert([
@@ -187,9 +168,9 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            if (!$user->email_verified_at) {
-                return response()->json(["error" => "Email not verified. Please check your inbox for the verification email sent at time of registration."], 401);
-            }
+            // if (!$user->email_verified_at) {
+            //     return response()->json(["error" => "Email not verified. Please check your inbox for the verification email sent at time of registration."], 401);
+            // }
             $role = $user->getRoleNames()->first();
             if ($role !== $request->input('role')) {
                 return response()->json(["error" => "Invalid role."], 401);

@@ -1,15 +1,18 @@
 <?php
 
-use App\Http\Controllers\BookmarkController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\FolderController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Feedback;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FolderController;
 use App\Http\Controllers\VendorController;
-use App\Http\Controllers\VendorServiceController;
-use App\Http\Controllers\ServicesTypeController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ItemPriceController;
+use App\Http\Controllers\ServicesTypeController;
+use App\Http\Controllers\VendorServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,17 +32,6 @@ use App\Http\Controllers\ItemPriceController;
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/get-user-details', [AuthController::class, 'getUserDetails'])->name('get-user-details');
 
-Route::post('/create-service', [VendorServiceController::class, 'createService'])->name('create-service');
-Route::get('/get-services', [VendorServiceController::class, 'getAllServices'])->name('get-services');
-
-// get services , sub services and their items
-Route::get('/get-services-type', [ServicesTypeController::class, 'getAllServicesType'])->name('get-services-type');
-Route::get('/get-sub-services-type', [ServicesTypeController::class, 'getSubServicesType'])->name('get-sub-services-type');
-
-// set price for each items
-Route::post('/item-price', [ItemPriceController::class, 'setItemPrice'])->name('item-price');
-
-
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/forget-password', [AuthController::class, 'forgotPassword'])->name('forget-password');
@@ -53,33 +45,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/session', [AuthController::class, 'isSession']);
     });
+    Route::post('/feedback', [FeedbackController::class, 'store']);
+    Route::get('/get-feedback', [FeedbackController::class, 'index']);
+    Route::get('/get-feedbacks', [FeedbackController::class, 'getFeedback']);
+    Route::get('get-comments' , [CommentController::class, 'getCommentsByFeedback']);
+Route::post('add-comments' , [CommentController::class, 'addCommentToFeedback']);
 
-    Route::post('/profile', [AuthController::class, 'updateProfile']);
-    Route::post('/upload/profile', [AuthController::class, 'updateProfile']);
-    Route::post('/profile/details', [AuthController::class, 'updateProfileDetails']);
-    Route::post('/email-asset', [AuthController::class, 'emailAsset']);
-
-    Route::group(['prefix' => 'category'], function () {
-        Route::post('/store', [CategoryController::class, 'store']);
-        Route::get('/get', [CategoryController::class, 'get']);
-        Route::get('/all', [CategoryController::class, 'all']);
-    });
-
-    Route::prefix('folder')->group(function () {
-        Route::post('/store', [FolderController::class, 'store']);
-        Route::put('/update/{id}', [FolderController::class, 'update']);
-        Route::get('/bookmarks', [FolderController::class, 'bookmarks']);
-        Route::get('/list', [FolderController::class, 'list']);
-        Route::delete('/delete/{id}', [FolderController::class, 'destroy']);
-    });
-
-    Route::prefix('bookmark')->group(function () {
-        Route::post('/store', [BookmarkController::class, 'store']);
-        Route::get('/list', [BookmarkController::class, 'getList']);
-        Route::delete('/delete', [BookmarkController::class, 'destroy']);
-        Route::get('/assets', [BookmarkController::class, 'assets']);
-        Route::post('/copy-to-folder', [BookmarkController::class, 'copyToFolder']);
-    });
 });
 
 Route::any('{url}', function () {

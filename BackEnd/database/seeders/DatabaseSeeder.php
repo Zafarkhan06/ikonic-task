@@ -13,23 +13,19 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
 
-            CategorySeeder::class,
-            ServicesTypeSeeder::class,
             PermissionSeeder::class,
-            SubServicesTypeSeeder::class,
-            SubServicesItemsSeeder::class,
             RoleSeeder::class
 
         ]);
 
         $user = User::updateOrCreate(
-            ['email' => 'admin@muntazim.com'],
+            ['email' => 'iambestcandidate@ikonic.com'],
             [
-                'name'     => 'Test User',
+                'name'     => 'IKONIC Admin',
                 'password' => bcrypt('123456789'),
             ]
         );
 
-        $user->assignRole('Admin');
+        $user->assignRole('VendorAdmin');
     }
 }
